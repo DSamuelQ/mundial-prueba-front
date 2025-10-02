@@ -36,3 +36,143 @@
     transform: rotate(360deg);
   }
 }
+
+.app-main { transition: margin-left .18s ease; min-height: 100vh; background:#f6f7fb; }
+@media (min-width: 768px) { .app-main.with-sidebar { margin-left: 240px; } }
+
+.card { border-radius: 12px; }
+
+/* opcional: ajustar offcanvas z-index para encima del header si usas uno */
+.offcanvas { z-index: 1080; }
+
+/* En tu App.css o NavBar.css */
+.navbar {
+  background: #06b6d4;
+  color: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 0 0 1rem 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px #0002;
+}
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 2rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+.navbar a:hover {
+  background: #0891b2;
+}
+.navbar .logout-btn {
+  background: #fff;
+  color: #06b6d4;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.navbar .logout-btn:hover {
+  background: #e0f2fe;
+}
+
+/* Sidebar / layout */
+.app-root { min-height: 100vh; background: #f7fbfc; }
+
+/* Sidebar fijo a la izquierda */
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%);
+  color: #022c43;
+  padding: 18px 12px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.08);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.app-sidebar .brand {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #022c43;
+}
+
+.app-sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-item {
+  color: #022c43;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-block;
+  transition: background 0.12s, transform 0.08s;
+}
+.menu-item:hover {
+  background: rgba(255,255,255,0.12);
+  transform: translateX(4px);
+  color: #001927;
+}
+
+.sidebar-bottom {
+  border-top: 1px solid rgba(255,255,255,0.18);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-info { font-size: 14px; color: #001927; }
+.user-info .role { font-size: 12px; color: rgba(0,0,0,0.6); margin-left: 6px; }
+
+.logout-btn {
+  background: #001827;
+  color: #ffffff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.logout-btn:hover { background: rgba(0,0,0,0.8); }
+
+/* Main content shifted right when sidebar visible */
+.app-main { padding: 24px; transition: margin-left 0.15s ease; min-height: 100vh; }
+.app-main.with-sidebar { margin-left: 240px; }
+
+/* Asegura que el contenido tenga padding y no esté pegado */
+.app-main {
+  padding: 24px;
+  min-height: 100vh;
+  background: #f7fbfc;
+}
+
+/* Responsive: en pantallas pequeñas el sidebar deja de ser fijo */
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+  }
+  .app-sidebar .menu { flex-direction: row; gap: 8px; }
+  .app-main.with-sidebar { margin-left: 0; }
+}
