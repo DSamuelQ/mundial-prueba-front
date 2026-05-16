@@ -94,7 +94,6 @@ export default function Sorteos() {
       await confirmSorteo(payload);
       setError("");
       setCantidadGrupos("");
-      setSeed("");
       setPreview(null);
       cargarDatos();
       alert("Sorteo confirmado y guardado exitosamente");
@@ -110,7 +109,6 @@ export default function Sorteos() {
   const handleCancel = () => {
     setPreview(null);
     setCantidadGrupos("");
-    setSeed("");
     setError("");
   };
 
@@ -159,7 +157,6 @@ export default function Sorteos() {
           <div className="card-header bg-success text-white">
             <h5 className="mb-0">
               Preview: {preview.cantidad_grupos} grupos × {preview.equipos_por_grupo} equipos
-              {preview.seed && ` (seed: ${preview.seed})`}
             </h5>
           </div>
           <div className="card-body">
