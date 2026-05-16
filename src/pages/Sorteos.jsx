@@ -7,7 +7,6 @@ export default function Sorteos() {
   const [grupos, setGrupos] = useState([]);
   const [equipos, setEquipos] = useState([]);
   const [cantidadGrupos, setCantidadGrupos] = useState("");
-  const [seed, setSeed] = useState("");
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
