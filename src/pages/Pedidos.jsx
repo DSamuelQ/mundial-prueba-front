@@ -16,19 +16,32 @@ export default function Pedidos() {
   // Filtro en frontend
   const pedidosFiltrados = pedidos.filter(p => {
     // Filtrar por usuario (usuario_pedido)
-    if (filtros.usuario && !p.usuario_pedido.toLowerCase().includes(filtros.usuario.toLowerCase())) {
+    if (
+      filtros.usuario &&
+      !(p.usuario_pedido && p.usuario_pedido.toLowerCase().includes(filtros.usuario.toLowerCase()))
+    ) {
       return false;
     }
-    // Filtrar por fecha desde
-    if (filtros.desde && new Date(p.fecha_pedido) < new Date(filtros.desde)) {
+
+    const pedidoFechaStr = fechaLocalYYYYMMDD(p.fecha_pedido);
+
+    if (filtros.desde && pedidoFechaStr < filtros.desde) {
       return false;
     }
-    // Filtrar por fecha hasta
-    if (filtros.hasta && new Date(p.fecha_pedido) > new Date(filtros.hasta + "T23:59:59")) {
+    if (filtros.hasta && pedidoFechaStr > filtros.hasta) {
       return false;
     }
     return true;
   });
+
+  // Normaliza fechas a yyyy-mm-dd para comparar solo la fecha
+  function fechaLocalYYYYMMDD(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
 
   return (
     <div className="container py-4">

@@ -1,25 +1,23 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
 
-import Login from './pages/Login';
 import Clientes from './pages/Clientes';
 import Pedidos from './pages/Pedidos';
 import PedidoDetalle from './pages/PedidoDetalle';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
+import Grupos from './pages/Grupos';
+import EquiposCrud from './pages/EquiposCrud';
+import Sorteos from './pages/Sorteos';
 
-function AppContent() {
-  const { user } = useAuth();
+export default function App() {
   return (
-    <div className="app-root">
-      {user && <Sidebar />}
-
-      <main className={user ? 'app-main with-sidebar' : 'app-main'}>
-        <div className="container-fluid p-3">
-          {user && (
+    <BrowserRouter>
+      <div className="app-root">
+        <Sidebar />
+        <main className="app-main with-sidebar">
+          <div className="container-fluid p-3">
             <div className="d-md-none mb-3">
               <button
                 className="btn btn-outline-primary"
@@ -31,29 +29,20 @@ function AppContent() {
                 ☰
               </button>
             </div>
-          )}
 
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
-            {/* Mostrar Users y Reports sin condicionar por rol */}
-            <Route path="/usuarios" element={<ProtectedRoute><Users /></ProtectedRoute>} />
-            <Route path="/pedidos" element={<ProtectedRoute><Pedidos /></ProtectedRoute>} />
-            <Route path="/pedidos/:id" element={<ProtectedRoute><PedidoDetalle /></ProtectedRoute>} />
-            <Route path="/reportes" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-          </Routes>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
-    </AuthProvider>
+            <Routes>
+              <Route path="/" element={<Clientes />} />
+              <Route path="/usuarios" element={<Users />} />
+              <Route path="/grupos" element={<Grupos />} />
+              <Route path="/equipos" element={<EquiposCrud />} />
+              <Route path="/sorteos" element={<Sorteos />} />
+              <Route path="/pedidos" element={<Pedidos />} />
+              <Route path="/pedidos/:id" element={<PedidoDetalle />} />
+              <Route path="/reportes" element={<Reports />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </BrowserRouter>
   );
 }

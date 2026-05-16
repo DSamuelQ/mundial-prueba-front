@@ -1,42 +1,7 @@
-/*
-  FILE: src/components/Sidebar.jsx
-  Fix aplicado: rol puede venir como string o como objeto { nombreRol }
-*/
-
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function Sidebar() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
-
-    if (!user) return null;
-
-    const displayName =
-        (user?.nombre && user?.apellido) ? `${user.nombre} ${user.apellido}` :
-            (user?.nombre) ? user.nombre :
-                (user?.username) ? user.username :
-                    'Usuario';
-
-    const initialsSource = String(displayName !== 'Usuario' ? displayName : (user?.usuario ?? 'U'));
-    const initials = initialsSource
-        .split(' ')
-        .map(s => s[0])
-        .filter(Boolean)
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
-
-    const handleLogout = async () => {
-        try {
-            await logout();
-        } catch (err) {
-            console.error('Logout error:', err);
-        }
-        navigate('/login');
-    };
-
     return (
         <>
             <aside
@@ -50,31 +15,20 @@ export default function Sidebar() {
                     <span className="h5 m-0 fw-bold text-primary">ClientesPedidos</span>
                 </Link>
 
-                <div className="card p-2 mb-3" style={{ borderRadius: 10 }}>
-                    <div className="d-flex align-items-center">
-                        <div
-                            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                            style={{ width: 44, height: 44, fontWeight: 700 }}
-                        >
-                            {initials}
-                        </div>
-                        <div className="ms-2">
-                            <div className="fw-bold">{displayName}</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Navegación principal - mostrar todas las páginas siempre */}
                 <nav className="nav flex-column mb-3">
+                    {/* 
                     <Link to="/pedidos" className="nav-link rounded px-2">Pedidos</Link>
                     <Link to="/" className="nav-link rounded px-2">Clientes</Link>
-                    <Link to="/usuarios" className="nav-link rounded px-2">Usuarios</Link>
                     <Link to="/reportes" className="nav-link rounded px-2">Reportes</Link>
+                    <Link to="/usuarios" className="nav-link rounded px-2">Usuarios</Link>
+                    */}
+                    <Link to="/grupos" className="nav-link rounded px-2">Grupos</Link>
+                    <Link to="/equipos" className="nav-link rounded px-2">Equipos</Link>
+                    <Link to="/sorteos" className="nav-link rounded px-2">Sorteos</Link>
                 </nav>
 
                 <div className="mt-auto">
                     <div className="mb-2 small text-muted">Versión 1.0</div>
-                    <button className="btn btn-outline-danger w-100" onClick={handleLogout}>Cerrar sesión</button>
                 </div>
             </aside>
 
@@ -84,26 +38,20 @@ export default function Sidebar() {
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body d-flex flex-column">
-                    <div className="d-flex align-items-center mb-3">
-                        <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style={{ width: 44, height: 44, fontWeight: 700 }}>
-                            {initials}
-                        </div>
-                        <div className="ms-2">
-                            <div className="fw-bold">{displayName}</div>
-                        </div>
-                    </div>
-
                     <nav className="nav flex-column mb-3">
+                        {/*
                         <Link className="nav-link" to="/pedidos" data-bs-dismiss="offcanvas">Pedidos</Link>
                         <Link className="nav-link" to="/" data-bs-dismiss="offcanvas">Clientes</Link>
                         <Link className="nav-link" to="/usuarios" data-bs-dismiss="offcanvas">Usuarios</Link>
                         <Link className="nav-link" to="/reportes" data-bs-dismiss="offcanvas">Reportes</Link>
+                        */ }
+                        <Link className="nav-link" to="/grupos" data-bs-dismiss="offcanvas">Grupos</Link>
+                        <Link className="nav-link" to="/equipos" data-bs-dismiss="offcanvas">Equipos</Link>
+                        <Link className="nav-link" to="/sorteos" data-bs-dismiss="offcanvas">Sorteos</Link>
                     </nav>
 
                     <div className="mt-auto">
-                        <button className="btn btn-outline-danger w-100" onClick={() => { document.querySelector('#offcanvasSidebar .btn-close')?.click(); handleLogout(); }}>
-                            Cerrar sesión
-                        </button>
+                        <div className="small text-muted">Versión 1.0</div>
                     </div>
                 </div>
             </div>

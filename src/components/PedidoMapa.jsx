@@ -25,9 +25,9 @@ export default function PedidoMapa({ lat, lng, zoom = 16, title = "Ubicación de
     return <div style={{ padding: "0.5rem" }}>No hay ubicación válida</div>;
   }
 
-  // Cambia height y width a 300px para hacerlo cuadrado y compacto
+  // Cambia height y width para agrandar el mapa
   return (
-    <div style={{ height: "300px", width: "300px", margin: "1rem auto" }}>
+    <div style={{ height: "500px", width: "100%", maxWidth: "1000px", margin: "1rem auto" }}>
       <MapContainer
         center={[latNum, lngNum]}
         zoom={zoom}
