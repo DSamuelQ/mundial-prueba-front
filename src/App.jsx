@@ -2,11 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 
-import Clientes from './pages/Clientes';
-import Pedidos from './pages/Pedidos';
-import PedidoDetalle from './pages/PedidoDetalle';
-import Users from './pages/Users';
-import Reports from './pages/Reports';
 import Grupos from './pages/Grupos';
 import EquiposCrud from './pages/EquiposCrud';
 import Sorteos from './pages/Sorteos';
