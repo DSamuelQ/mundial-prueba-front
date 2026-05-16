@@ -108,18 +108,6 @@ export default function EquiposCrud() {
     }
   };
 
-  const resolveEquipoGrupoId = (equipo) => {
-    // Intentamos soportar diferentes shapes que puede devolver la API
-    if (equipo?.grupo?.id_grupo != null) return String(equipo.grupo.id_grupo);
-    if (equipo?.id_grupo != null) return String(equipo.id_grupo);
-    if (equipo?.grupoId != null) return String(equipo.grupoId);
-    return "";
-  };
-
-  const grupoLabel = (equipo) => {
-    const id = resolveEquipoGrupoId(equipo);
-    return id ? `#${id}` : "—";
-  };
 
   const handleEdit = (e) => {
     setForm({
