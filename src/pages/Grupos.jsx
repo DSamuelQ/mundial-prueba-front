@@ -7,6 +7,7 @@ export default function Grupos() {
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const cargarGrupos = async () => {
     try {
@@ -62,6 +63,7 @@ export default function Grupos() {
 
       setForm({ nombre: "", descripcion: "" });
       setEditId(null);
+      setShowModal(false);
       cargarGrupos();
     } catch (err) {
       console.error("Error guardando grupo:", err);
@@ -79,12 +81,14 @@ export default function Grupos() {
     });
     setEditId(g.id_grupo);
     setError("");
+    setShowModal(true);
   };
 
   const handleCancelEdit = () => {
     setForm({ nombre: "", descripcion: "" });
     setEditId(null);
     setError("");
+    setShowModal(false);
   };
 
   const handleDelete = async (g) => {
@@ -102,47 +106,98 @@ export default function Grupos() {
 
   return (
     <div className="container py-4">
-      <h1>Grupos</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="mb-0">Grupos</h1>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setForm({ nombre: "", descripcion: "" });
+            setEditId(null);
+            setError("");
+            setShowModal(true);
+          }}
+        >
+          + Agregar Grupo
+        </button>
+      </div>
 
-      <form onSubmit={handleSubmit} className="card p-3 mb-4 shadow-sm">
-        <div className="row g-2">
-          <div className="col-md-4">
-            <input
-              className="form-control"
-              placeholder="Nombre (máx 50 caracteres)"
-              value={form.nombre}
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-              required
-            />
-          </div>
+      {/* Modal */}
+      <div
+        className={`modal fade ${showModal ? "show" : ""}`}
+        id="modalGrupo"
+        tabIndex="-1"
+        aria-labelledby="modalGrupoLabel"
+        aria-hidden={!showModal}
+        style={{ display: showModal ? "block" : "none" }}
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalGrupoLabel">
+                {editId ? "Editar Grupo" : "Nuevo Grupo"}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleCancelEdit}
+                aria-label="Close"
+              ></button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label htmlFor="nombre" className="form-label">
+                    Nombre *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="nombre"
+                    placeholder="Nombre (máx 50 caracteres)"
+                    value={form.nombre}
+                    onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                    required
+                  />
+                </div>
 
-          <div className="col-md-5">
-            <input
-              className="form-control"
-              placeholder="Descripción (máx 175 caracteres)"
-              value={form.descripcion}
-              onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-            />
-          </div>
+                <div className="mb-3">
+                  <label htmlFor="descripcion" className="form-label">
+                    Descripción
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="descripcion"
+                    placeholder="Descripción (máx 175 caracteres)"
+                    rows="3"
+                    value={form.descripcion}
+                    onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+                  ></textarea>
+                </div>
 
-          <div className="col-md-3 d-grid">
-            <button className="btn btn-primary" type="submit" disabled={loading}>
-              {loading ? "Guardando..." : editId ? "Actualizar" : "Agregar"}
-            </button>
+                {error && <div className="alert alert-danger mb-0">{error}</div>}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? "Guardando..." : editId ? "Actualizar" : "Guardar"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
+      </div>
 
-        {editId && (
-          <div className="mt-2">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleCancelEdit}>
-              Cancelar edición
-            </button>
-          </div>
-        )}
+      {/* Backdrop */}
+      {showModal && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={handleCancelEdit}
+        ></div>
+      )}
 
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
-      </form>
-
+      {/* Tabla */}
       <div className="card shadow-sm">
         <div className="card-body">
           <div className="table-responsive">

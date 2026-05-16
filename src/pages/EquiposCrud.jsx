@@ -1,35 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getEquipos, createEquipo, updateEquipo, deleteEquipo } from "../api/equipos";
-import { getGrupos } from "../api/grupos";
 
 export default function EquiposCrud() {
   const [equipos, setEquipos] = useState([]);
-  const [grupos, setGrupos] = useState([]);
   const [form, setForm] = useState({
     nombre_pais: "",
     codigo_fifa: "",
     ranking_fifa: "",
     director_tecnico: "",
     cant_jugadores: "",
-    id_grupo: "",
   });
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const gruposById = useMemo(() => {
-    const map = new Map();
-    for (const g of grupos) map.set(String(g.id_grupo), g);
-    return map;
-  }, [grupos]);
+  const [showModal, setShowModal] = useState(false);
 
   const cargar = async () => {
     try {
-      const [resEquipos, resGrupos] = await Promise.all([getEquipos(), getGrupos()]);
+      const resEquipos = await getEquipos();
       setEquipos(resEquipos.data);
-      setGrupos(resGrupos.data);
     } catch (err) {
-      console.error("Error cargando equipos/grupos:", err);
+      console.error("Error cargando equipos:", err);
       setError("Error al cargar datos");
     }
   };
@@ -104,9 +95,9 @@ export default function EquiposCrud() {
         ranking_fifa: "",
         director_tecnico: "",
         cant_jugadores: "",
-        id_grupo: "",
       });
       setEditId(null);
+      setShowModal(false);
       cargar();
     } catch (err) {
       console.error("Error guardando equipo:", err);
@@ -125,6 +116,11 @@ export default function EquiposCrud() {
     return "";
   };
 
+  const grupoLabel = (equipo) => {
+    const id = resolveEquipoGrupoId(equipo);
+    return id ? `#${id}` : "—";
+  };
+
   const handleEdit = (e) => {
     setForm({
       nombre_pais: e.nombre_pais ?? "",
@@ -132,10 +128,10 @@ export default function EquiposCrud() {
       ranking_fifa: e.ranking_fifa ?? "",
       director_tecnico: e.director_tecnico ?? "",
       cant_jugadores: e.cant_jugadores ?? "",
-      id_grupo: resolveEquipoGrupoId(e),
     });
     setEditId(e.id_equipo);
     setError("");
+    setShowModal(true);
   };
 
   const handleCancelEdit = () => {
@@ -145,10 +141,10 @@ export default function EquiposCrud() {
       ranking_fifa: "",
       director_tecnico: "",
       cant_jugadores: "",
-      id_grupo: "",
     });
     setEditId(null);
     setError("");
+    setShowModal(false);
   };
 
   const handleDelete = async (equipo) => {
@@ -164,121 +160,168 @@ export default function EquiposCrud() {
     }
   };
 
-  const grupoLabel = (equipo) => {
-    const id = resolveEquipoGrupoId(equipo);
-    const g = id ? gruposById.get(id) : null;
-    if (equipo?.grupo?.nombre) return equipo.grupo.nombre;
-    if (g?.nombre) return g.nombre;
-    return id ? `#${id}` : "—";
-  };
-
   return (
     <div className="container py-4">
-      <h1>Equipos</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="mb-0">Equipos</h1>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setForm({
+              nombre_pais: "",
+              codigo_fifa: "",
+              ranking_fifa: "",
+              director_tecnico: "",
+              cant_jugadores: "",
+            });
+            setEditId(null);
+            setError("");
+            setShowModal(true);
+          }}
+        >
+          + Agregar Equipo
+        </button>
+      </div>
 
-      <form onSubmit={handleSubmit} className="card p-3 mb-4 shadow-sm">
-        <div className="row g-2">
-          <div className="col-md-4">
-            <input
-              className="form-control"
-              placeholder="Nombre país"
-              value={form.nombre_pais}
-              pattern="^[a-zA-Z\s\-]+$"
-              onChange={(e) => setForm({ ...form, nombre_pais: e.target.value })}
-              required
-              onInvalid={(e) =>
-                e.target.setCustomValidity("El nombre del país solo puede contener letras, espacios y guiones")
-              }
-              onInput={(e) => e.target.setCustomValidity("")}
-            />
-          </div>
+      {/* Modal */}
+      <div
+        className={`modal fade ${showModal ? "show" : ""}`}
+        id="modalEquipo"
+        tabIndex="-1"
+        aria-labelledby="modalEquipoLabel"
+        aria-hidden={!showModal}
+        style={{ display: showModal ? "block" : "none" }}
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalEquipoLabel">
+                {editId ? "Editar Equipo" : "Nuevo Equipo"}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleCancelEdit}
+                aria-label="Close"
+              ></button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="modal-body">
+              <div className="row g-3">
+                  <div className="col-md-6">
+                    <label htmlFor="nombrePais" className="form-label">
+                      Nombre del País *
+                    </label>
+                    <input
+                      className="form-control"
+                      id="nombrePais"
+                      placeholder="Nombre país"
+                      value={form.nombre_pais}
+                      pattern="^[a-zA-Z\s\-]+$"
+                      onChange={(e) => setForm({ ...form, nombre_pais: e.target.value })}
+                      required
+                      onInvalid={(e) =>
+                        e.target.setCustomValidity("El nombre del país solo puede contener letras, espacios y guiones")
+                      }
+                      onInput={(e) => e.target.setCustomValidity("")}
+                    />
+                  </div>
 
-          <div className="col-md-2">
-            <input
-              className="form-control"
-              placeholder="Código FIFA"
-              maxLength={3}
-              pattern="^[a-zA-Z]+$"
-              value={form.codigo_fifa}
-              onChange={(ev) => setForm({ ...form, codigo_fifa: ev.target.value })}
-              required
-              onInvalid={(e) =>
-                e.target.setCustomValidity("El código FIFA debe tener máximo 3 caracteres y solo puede contener letras")
-              }
-              onInput={(e) => e.target.setCustomValidity("")}
-            />
-          </div>
+                  <div className="col-md-3">
+                    <label htmlFor="codigoFifa" className="form-label">
+                      Código FIFA *
+                    </label>
+                    <input
+                      className="form-control"
+                      id="codigoFifa"
+                      placeholder="Código FIFA"
+                      maxLength={3}
+                      pattern="^[a-zA-Z]+$"
+                      value={form.codigo_fifa}
+                      onChange={(ev) => setForm({ ...form, codigo_fifa: ev.target.value })}
+                      required
+                      onInvalid={(e) =>
+                        e.target.setCustomValidity("El código FIFA debe tener máximo 3 caracteres y solo puede contener letras")
+                      }
+                      onInput={(e) => e.target.setCustomValidity("")}
+                    />
+                  </div>
 
-          <div className="col-md-2">
-            <input
-              className="form-control"
-              placeholder="Ranking"
-              type="number"
-              value={form.ranking_fifa}
-              onChange={(ev) => setForm({ ...form, ranking_fifa: ev.target.value })}
-            />
-          </div>
+                  <div className="col-md-3">
+                    <label htmlFor="rankingFifa" className="form-label">
+                      Ranking FIFA *
+                    </label>
+                    <input
+                      className="form-control"
+                      id="rankingFifa"
+                      placeholder="Ranking"
+                      type="number"
+                      value={form.ranking_fifa}
+                      onChange={(ev) => setForm({ ...form, ranking_fifa: ev.target.value })}
+                      required
+                    />
+                  </div>
 
-          <div className="col-md-4">
-            <input
-              className="form-control"
-              placeholder="Director técnico"
-              pattern="^[a-zA-Z\s\-]+$"
-              value={form.director_tecnico}
-              onChange={(ev) => setForm({ ...form, director_tecnico: ev.target.value })}
-              onInvalid={(e) =>
-                e.target.setCustomValidity("El nombre del director técnico solo puede contener letras, espacios y guiones")
-              }
-              onInput={(e) => e.target.setCustomValidity("")}
-            />
-          </div>
+                  <div className="col-md-6">
+                    <label htmlFor="directorTecnico" className="form-label">
+                      Director Técnico
+                    </label>
+                    <input
+                      className="form-control"
+                      id="directorTecnico"
+                      placeholder="Director técnico"
+                      pattern="^[a-zA-Z\s\-]+$"
+                      value={form.director_tecnico}
+                      onChange={(ev) => setForm({ ...form, director_tecnico: ev.target.value })}
+                      onInvalid={(e) =>
+                        e.target.setCustomValidity("El nombre del director técnico solo puede contener letras, espacios y guiones")
+                      }
+                      onInput={(e) => e.target.setCustomValidity("")}
+                    />
+                  </div>
 
-          <div className="col-md-2">
-            <input
-              className="form-control"
-              placeholder="Jugadores (23-26)"
-              type="number"
-              min="23"
-              max="26"
-              value={form.cant_jugadores}
-              onChange={(ev) => setForm({ ...form, cant_jugadores: ev.target.value })}
-              required
-            />
-          </div>
+                  <div className="col-md-6">
+                    <label htmlFor="cantJugadores" className="form-label">
+                      Jugadores (23-26) *
+                    </label>
+                    <input
+                      className="form-control"
+                      id="cantJugadores"
+                      placeholder="Jugadores"
+                      type="number"
+                      min="23"
+                      max="26"
+                      value={form.cant_jugadores}
+                      onChange={(ev) => setForm({ ...form, cant_jugadores: ev.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
 
-          <div className="col-md-4">
-            <select
-              className="form-select"
-              value={form.id_grupo}
-              onChange={(ev) => setForm({ ...form, id_grupo: ev.target.value })}
-            >
-              <option value="">Sin grupo</option>
-              {grupos.map((g) => (
-                <option key={g.id_grupo} value={g.id_grupo}>
-                  {g.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="col-md-3 d-grid">
-            <button className="btn btn-primary" type="submit" disabled={loading}>
-              {loading ? "Guardando..." : editId ? "Actualizar" : "Agregar"}
-            </button>
+                {error && <div className="alert alert-danger mt-3 mb-0">{error}</div>}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? "Guardando..." : editId ? "Actualizar" : "Guardar"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
+      </div>
 
-        {editId && (
-          <div className="mt-2">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={handleCancelEdit}>
-              Cancelar edición
-            </button>
-          </div>
-        )}
+      {/* Backdrop */}
+      {showModal && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={handleCancelEdit}
+        ></div>
+      )}
 
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
-      </form>
-
+      {/* Tabla */}
       <div className="card shadow-sm">
         <div className="card-body">
           <div className="table-responsive">
@@ -291,7 +334,6 @@ export default function EquiposCrud() {
                   <th>Ranking</th>
                   <th>DT</th>
                   <th>Jugadores</th>
-                  <th>Grupo</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -304,7 +346,6 @@ export default function EquiposCrud() {
                     <td>{e.ranking_fifa}</td>
                     <td>{e.director_tecnico}</td>
                     <td>{e.cant_jugadores}</td>
-                    <td>{grupoLabel(e)}</td>
                     <td>
                       <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(e)}>
                         Editar
