@@ -15,7 +15,7 @@ export default function NavBar() {
   return (
     <nav className="bg-cyan-600 text-white px-8 py-4 flex justify-between items-center shadow-md mb-8 rounded-b-lg">
       <div className="flex gap-8 items-center">
-        <span className="font-bold text-xl tracking-wide">ClientesPedidos</span>
+        <span className="font-bold text-xl tracking-wide">Sorteo Muncial</span>
         <Link to="/pedidos" className="hover:bg-cyan-700 px-3 py-2 rounded transition">Pedidos</Link>
         <Link to="/" className="hover:bg-cyan-700 px-3 py-2 rounded transition">Clientes</Link>
         <Link to="/usuarios" className="hover:bg-cyan-700 px-3 py-2 rounded transition">Usuarios</Link>

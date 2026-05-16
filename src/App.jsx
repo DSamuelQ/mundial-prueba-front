@@ -31,14 +31,16 @@ export default function App() {
             </div>
 
             <Routes>
+              {/* 
               <Route path="/" element={<Clientes />} />
               <Route path="/usuarios" element={<Users />} />
-              <Route path="/grupos" element={<Grupos />} />
-              <Route path="/equipos" element={<EquiposCrud />} />
-              <Route path="/sorteos" element={<Sorteos />} />
               <Route path="/pedidos" element={<Pedidos />} />
               <Route path="/pedidos/:id" element={<PedidoDetalle />} />
               <Route path="/reportes" element={<Reports />} />
+              */}
+              <Route path="/grupos" element={<Grupos />} />
+              <Route path="/equipos" element={<EquiposCrud />} />
+              <Route path="/sorteos" element={<Sorteos />} />
             </Routes>
           </div>
         </main>

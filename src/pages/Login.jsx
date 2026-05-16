@@ -64,7 +64,7 @@ export default function Login() {
               </form>
             </div>
             <div className="card-footer text-center text-muted small">
-              ClientesPedidos
+              Sorteo Mundial
             </div>
           </div>
         </div>
