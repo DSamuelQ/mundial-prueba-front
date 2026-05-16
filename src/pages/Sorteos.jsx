@@ -80,6 +80,7 @@ export default function Sorteos() {
       };
       const res = await generateSorteoPreview(payload);
       setPreview(res.data);
+      setShowModalSorteo(false);
     } catch (err) {
       console.error("Error generando preview:", err);
       const msg = err.response?.data?.message || err.message || "Error al generar preview";
@@ -125,9 +126,6 @@ export default function Sorteos() {
   };
 
   const handleCancel = () => {
-    setPreview(null);
-    setCantidadGrupos("");
-    setError("");
     setShowModalSorteo(false);
   };
 
@@ -287,7 +285,14 @@ export default function Sorteos() {
                   >
                     {confirmingLoading ? "Confirmando..." : "✓ Confirmar Sorteo"}
                   </button>
-                  <button className="btn btn-secondary" onClick={handleCancel}>
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={() => {
+                      setPreview(null);
+                      setCantidadGrupos("");
+                      setError("");
+                    }}
+                  >
                     ✕ Cancelar
                   </button>
                 </div>
